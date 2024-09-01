@@ -2,10 +2,10 @@ import { Component } from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import SignUp from "./components/SignUp/SignUp";
-import Login from "./components/Login/Login";
-import Home from "./components/Home";
-import TodoApp from "./components/TodoApp/TodoApp";
+import SignUp from "./components/SignUp/index";
+import Login from "./components/Login/index";
+import Home from "./components/index";
+import TodoApp from "./components/TodoApp/index";
 import Notes from "./components/TodoApp/Notes";
 
 export default class App extends Component {

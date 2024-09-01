@@ -2,7 +2,7 @@ import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "@fortawesome/fontawesome-free/css/all.min.css"; 
-import NavBar from "../Navbar/NavBar";
+import NavBar from "../Navbar/index";
 import { Outlet, Link } from "react-router-dom";
 
 export default function Login() {
