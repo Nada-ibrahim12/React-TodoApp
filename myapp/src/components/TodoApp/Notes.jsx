@@ -1,7 +1,17 @@
-import React, { useState } from "react";
+import React from "react";
 import NavBar from "../Navbar/NavBar";
 
-export default function Notes({ notes, handleAddNote, handleRemoveNote }) {
+export default function Notes({
+  notes,
+  handleAddNote,
+  handleRemoveNote,
+  handleEditNote,
+  currentNote,
+  setCurrentNote,
+  editingIndex,
+  setEditingIndex,
+  handleCheckboxChange,
+}) {
   return (
     <div>
       <NavBar />
@@ -23,7 +33,8 @@ export default function Notes({ notes, handleAddNote, handleRemoveNote }) {
                           <input
                             type="text"
                             className="form-control form-control-lg"
-                            id="note"
+                            value={currentNote}
+                            onChange={(e) => setCurrentNote(e.target.value)}
                             placeholder="Add new..."
                           />
                           <a
@@ -41,7 +52,7 @@ export default function Notes({ notes, handleAddNote, handleRemoveNote }) {
                               className="btn btn-dark"
                               onClick={handleAddNote}
                             >
-                              Add
+                              {editingIndex !== null ? "Update" : "Add"}
                             </button>
                           </div>
                         </div>
@@ -82,18 +93,20 @@ export default function Notes({ notes, handleAddNote, handleRemoveNote }) {
                             checked={note.checkbox}
                             id={`flexCheckChecked${index}`}
                             aria-label="..."
+                            onClick={() => handleCheckboxChange(index)}
                           />
                         </div>
-                        <li className="list-group-item px-3 py-1 d-flex align-items-center flex-grow-1 border-0 bg-transparent">
+                        <div className="px-3 py-1 d-flex align-items-center flex-grow-1 border-0 bg-transparent">
                           <p className="lead fw-normal mb-0">{note.note}</p>
-                        </li>
-                        <li className="list-group-item ps-3 pe-0 py-1 rounded-0 border-0 bg-treanspernt">
+                        </div>
+                        <div className="ps-3 pe-0 py-1 rounded-0 border-0 bg-transparent">
                           <div className="d-flex flex-row justify-content-end mb-1">
                             <a
                               href="#!"
                               className="text-info"
                               data-mdb-tooltip-init
                               title="Edit todo"
+                              onClick={() => handleEditNote(index)}
                             >
                               <i className="fas fa-pencil-alt me-3"></i>
                             </a>
@@ -120,7 +133,7 @@ export default function Notes({ notes, handleAddNote, handleRemoveNote }) {
                               </p>
                             </a>
                           </div>
-                        </li>
+                        </div>
                       </li>
                     ))}
                   </ul>
