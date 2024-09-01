@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import NavBar from "../Navbar/index";
+import Login from "../Login/index";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
@@ -11,12 +13,24 @@ export default function SignUp() {
     email: "",
     password: "",
   });
+  const navigate = useNavigate();
   function getData(e) {
     let data = { ...formData };
     data[e.target.name] = e.target.value;
     setFormData(data);
   }
-  function submitHandler() {}
+  function submitHandler(e) {
+    e.preventDefault();
+    axios.post(
+      "https://acba71ec-b9e7-4fc9-a439-142111dfbdd4.mock.pstmn.io/PMAK-66d4b688dcf1140001e65edd-XXXX/register",
+      formData
+    ).then((res) =>{
+      navigate("/Login");
+    }).catch((err) =>{
+      console.log(err);
+      navigate("/Login");
+    })
+  }
   return (
     <div>
       <NavBar />
