@@ -6,6 +6,7 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { Outlet, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import Joi from "joi";
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
@@ -21,15 +22,29 @@ export default function SignUp() {
   }
   function submitHandler(e) {
     e.preventDefault();
-    axios.post(
-      "https://acba71ec-b9e7-4fc9-a439-142111dfbdd4.mock.pstmn.io/PMAK-66d4b688dcf1140001e65edd-XXXX/register",
-      formData
-    ).then((res) =>{
-      navigate("/Login");
-    }).catch((err) =>{
-      console.log(err);
-      navigate("/Login");
-    })
+    axios
+      .post(
+        "https://acba71ec-b9e7-4fc9-a439-142111dfbdd4.mock.pstmn.io/PMAK-66d4b688dcf1140001e65edd-XXXX/register",
+        formData
+      )
+      .then((res) => {
+        navigate("/Login");
+      })
+      .catch((err) => {
+        console.log(err);
+        navigate("/Login");
+      });
+  }
+  function validation() {
+    let schema = Joi.object({
+      name: Joi.string().alphanum().min(3).max(30).required(),
+      email: Joi.string().email({
+        minDomainSegments: 2,
+        tlds: { allow: ["com", "net"] },
+      }),
+      password: Joi.string().pattern(new RegExp("^[a-zA-Z0-9]{3,30}$")),
+    });
+    return schema.validate(formData, {abortEarly:true});
   }
   return (
     <div>
