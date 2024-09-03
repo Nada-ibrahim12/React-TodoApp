@@ -1,12 +1,14 @@
-import { Component } from "react";
 import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Component } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import "@fortawesome/fontawesome-free/css/all.min.css";
 import SignUp from "./components/SignUp/index";
 import Login from "./components/Login/index";
 import Home from "./components/index";
 import TodoApp from "./components/TodoApp/index";
-import Notes from "./components/TodoApp/Notes";
+// import Notes from "./components/TodoApp/Notes";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 export default class App extends Component {
   render() {

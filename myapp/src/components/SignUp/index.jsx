@@ -1,10 +1,6 @@
+import { Outlet, Link, useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import NavBar from "../Navbar/index";
-import Login from "../Login/index";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import "@fortawesome/fontawesome-free/css/all.min.css";
-import { Outlet, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Joi from "joi";
 
