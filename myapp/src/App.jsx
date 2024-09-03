@@ -1,30 +1,79 @@
 import "./App.css";
-import { Component } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import NavBar from "./components/Navbar/index";
 import SignUp from "./components/SignUp/index";
 import Login from "./components/Login/index";
 import Home from "./components/index";
 import TodoApp from "./components/TodoApp/index";
-// import Notes from "./components/TodoApp/Notes";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import React, { useState } from "react";
+import { jwtDecode } from "jwt-decode";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-export default class App extends Component {
-  render() {
-    return (
-      <div>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Home />}></Route>
-            <Route path="welcomePage" element={<Home />}></Route>
-            <Route path="Register" element={<SignUp />}></Route>
-            <Route path="Login" element={<Login />}></Route>
-            <Route path="/todo" element={<TodoApp />}></Route>
-            {/* <Route path="/notes" element={<Notes />}></Route> */}
-          </Routes>
-        </BrowserRouter>
-      </div>
-    );
+export default function App() {
+  const [userData, setUserData] = useState(null);
+
+  function saveDataUser() {
+    const token = localStorage.getItem("Token");
+    if (token) {
+      const decoded = jwtDecode(token);
+      setUserData(decoded);
+    }
   }
+
+  function logOut() {
+    setUserData(null);
+    localStorage.removeItem("Token");
+    Navigate("/login");
+  }
+
+  function ProtectedRoute(props) {
+    if (localStorage.getItem("Token") == null) {
+      return <Navigate to={"/login"} />;
+    } else {
+      return props.children;
+    }
+  }
+  return (
+    <BrowserRouter>
+      <div>
+        <NavBar userData={userData} logOut={logOut} />
+        <div className="container-fluid">
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Home />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/welcomePage"
+              element={
+                <ProtectedRoute>
+                  <Home />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/register" element={<SignUp />} />
+            <Route
+              path="/login"
+              element={<Login saveDataUser={saveDataUser} />}
+            />
+            <Route
+              path="/todo"
+              element={
+                <ProtectedRoute>
+                  <TodoApp />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="*" element={<h1>Not Found</h1>}></Route>
+          </Routes>
+        </div>
+      </div>
+    </BrowserRouter>
+  );
 }

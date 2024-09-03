@@ -1,10 +1,9 @@
 import { Link, useNavigate } from "react-router-dom";
 import React, { useState } from "react";
-import NavBar from "../Navbar/index";
 import axios from "axios";
 import Joi from "joi";
 
-export default function Login() {
+export default function Login({ saveDataUser }) {
   const navigate = useNavigate();
   const [error, setError] = useState("");
   const [errors, setErrors] = useState([]);
@@ -27,6 +26,9 @@ export default function Login() {
       axios
         .post("", formData)
         .then((res) => {
+          console.log(res.data.token);
+          localStorage.setItem("Token", res.data.token);
+          saveDataUser();
           navigate("/welcomePage");
         })
         .catch((err) => {
@@ -48,7 +50,6 @@ export default function Login() {
   }
   return (
     <div>
-      <NavBar />
       <section className="vh-75 mt-5 pt-5">
         <div className="container-fluid h-custom">
           <div className="row d-flex justify-content-center align-items-center h-100">

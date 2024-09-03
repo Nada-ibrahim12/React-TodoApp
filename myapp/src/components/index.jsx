@@ -1,10 +1,8 @@
 import React from "react";
-import NavBar from "./Navbar/index";
 
 export default function Home() {
   return (
     <div>
-      <NavBar />
       <div className="container-fluid h-custom mt-5 pt-5">
         <div className="row d-flex justify-content-center align-items-center h-100">
           <div className="col-md-9 col-lg-6 col-xl-5">

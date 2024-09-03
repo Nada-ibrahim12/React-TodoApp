@@ -1,6 +1,5 @@
 import { Outlet, Link, useNavigate } from "react-router-dom";
 import React, { useState } from "react";
-import NavBar from "../Navbar/index";
 import axios from "axios";
 import Joi from "joi";
 
@@ -48,7 +47,6 @@ export default function SignUp() {
   }
   return (
     <div>
-      <NavBar />
       <section className="vh-100">
         <div className="container-fluid">
           <div className="row d-flex justify-content-center align-items-center h-100">

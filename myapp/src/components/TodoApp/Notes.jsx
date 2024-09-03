@@ -1,5 +1,4 @@
 import React from "react";
-import NavBar from "../Navbar/index";
 
 export default function Notes({
   notes,
@@ -14,7 +13,6 @@ export default function Notes({
 }) {
   return (
     <div>
-      <NavBar />
       <section className="vh-100">
         <div className="container py-5 h-100">
           <div className="row d-flex justify-content-center align-items-center h-100">
