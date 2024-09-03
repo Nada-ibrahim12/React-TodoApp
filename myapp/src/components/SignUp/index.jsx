@@ -27,16 +27,16 @@ export default function SignUp() {
     let statusError = validation();
     if (statusError?.error) {
       setErrors(statusError?.error.details);
-    } else {
-      // axios
-      //   .post("", formData)
-      //   .then((res) => {
-      //     navigate("/Login");
-      //   })
-      //   .catch((err) => {
-      //     console.log(err);
-      //     setError(err.response.data.message);
-      //   });
+      // } else {
+      //   axios
+      //     .post("", formData)
+      //     .then((res) => {
+      //       navigate("/Login");
+      //     })
+      //     .catch((err) => {
+      //       console.log(err);
+      //       setError(err.response.data.message);
+      //     });
     }
   }
   function validation() {
@@ -61,7 +61,6 @@ export default function SignUp() {
                 <div className="card-body">
                   <div className="row justify-content-center">
                     <div className="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
-                      {console.log(errors)}
                       <p className="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-5">
                         Sign up
                       </p>
