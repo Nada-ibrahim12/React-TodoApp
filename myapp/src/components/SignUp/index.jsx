@@ -9,12 +9,14 @@ import axios from "axios";
 import Joi from "joi";
 
 export default function SignUp() {
+  const navigate = useNavigate();
+  const [error, setError] = useState("");
+  const [errors, setErrors] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
   });
-  const navigate = useNavigate();
   function getData(e) {
     let data = { ...formData };
     data[e.target.name] = e.target.value;
@@ -22,18 +24,20 @@ export default function SignUp() {
   }
   function submitHandler(e) {
     e.preventDefault();
-    axios
-      .post(
-        "https://acba71ec-b9e7-4fc9-a439-142111dfbdd4.mock.pstmn.io/PMAK-66d4b688dcf1140001e65edd-XXXX/register",
-        formData
-      )
-      .then((res) => {
-        navigate("/Login");
-      })
-      .catch((err) => {
-        console.log(err);
-        navigate("/Login");
-      });
+    let statusError = validation();
+    if (statusError?.error) {
+      setErrors(statusError?.error.details);
+    } else {
+      // axios
+      //   .post("", formData)
+      //   .then((res) => {
+      //     navigate("/Login");
+      //   })
+      //   .catch((err) => {
+      //     console.log(err);
+      //     setError(err.response.data.message);
+      //   });
+    }
   }
   function validation() {
     let schema = Joi.object({
@@ -44,7 +48,7 @@ export default function SignUp() {
       }),
       password: Joi.string().pattern(new RegExp("^[a-zA-Z0-9]{3,30}$")),
     });
-    return schema.validate(formData, {abortEarly:true});
+    return schema.validate(formData, { abortEarly: true });
   }
   return (
     <div>
@@ -57,9 +61,24 @@ export default function SignUp() {
                 <div className="card-body">
                   <div className="row justify-content-center">
                     <div className="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
+                      {console.log(errors)}
                       <p className="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-5">
                         Sign up
                       </p>
+                      {error.length ? (
+                        <h6 className="alert alert-danger">{error}</h6>
+                      ) : (
+                        <></>
+                      )}
+                      {errors.length > 0 ? (
+                        errors.map((err, i) => (
+                          <h6 key={i} className=" alert alert-danger">
+                            {err.message}
+                          </h6>
+                        ))
+                      ) : (
+                        <></>
+                      )}
                       <form onSubmit={submitHandler} className="mx-1 mx-md-4">
                         <div className="d-flex flex-row align-items-center mb-4">
                           <i className="fas fa-user fa-lg me-3 fa-fw"></i>
@@ -83,7 +102,7 @@ export default function SignUp() {
                               Your Email
                             </label>
                             <input
-                              // onChange={}
+                              onChange={getData}
                               name="email"
                               type="email"
                               id="form3Example3c"
@@ -98,7 +117,7 @@ export default function SignUp() {
                               Password
                             </label>
                             <input
-                              // onChange={}
+                              onChange={getData}
                               name="password"
                               type="password"
                               id="form3Example4c"
@@ -108,7 +127,6 @@ export default function SignUp() {
                         </div>
                         <div className="form-check d-flex justify-content-center mb-5">
                           <input
-                            // onChange={}
                             className="form-check-input me-2"
                             type="checkbox"
                             value=""
@@ -125,7 +143,6 @@ export default function SignUp() {
                             data-mdb-button-init
                             data-mdb-ripple-init
                             className="btn btn-dark btn-lg pe-4 ps-4"
-                            onClick={submitHandler}
                           >
                             Register
                           </button>
