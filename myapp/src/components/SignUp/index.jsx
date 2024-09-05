@@ -7,44 +7,71 @@ export default function SignUp() {
   const navigate = useNavigate();
   const [error, setError] = useState("");
   const [errors, setErrors] = useState([]);
+  const [isChecked, setIsChecked] = useState(false);
+
   const [formData, setFormData] = useState({
-    name: "",
+    userName: "",
     email: "",
     password: "",
+    rePassword: "",
+    dateOfBirth: "",
   });
+
   function getData(e) {
     let data = { ...formData };
     data[e.target.name] = e.target.value;
     setFormData(data);
   }
+
+  function handleCheckboxChange() {
+    setIsChecked(!isChecked);
+  }
+
   function submitHandler(e) {
     e.preventDefault();
+    if (!isChecked) {
+      setError("You must agree to the terms of service");
+      return;
+    }
     let statusError = validation();
     if (statusError?.error) {
       setErrors(statusError?.error.details);
-      // } else {
-      //   axios
-      //     .post("", formData)
-      //     .then((res) => {
-      //       navigate("/Login");
-      //     })
-      //     .catch((err) => {
-      //       console.log(err);
-      //       setError(err.response.data.message);
-      //     });
+    } else {
+      axios
+        .post("http://hawas.runasp.net/api/v1/Register", formData)
+        .then((res) => {
+          console.log(res.data);
+          navigate("/Login");
+        })
+        .catch((err) => {
+          console.log(err);
+          setError(err.response?.data?.message || "Registration failed");
+        });
     }
   }
+
   function validation() {
     let schema = Joi.object({
-      name: Joi.string().alphanum().min(3).max(30).required(),
-      email: Joi.string().email({
-        minDomainSegments: 2,
-        tlds: { allow: ["com", "net"] },
+      userName: Joi.string().alphanum().min(3).max(30).required(),
+      email: Joi.string()
+        .email({
+          minDomainSegments: 2,
+          tlds: { allow: ["com", "net"] },
+        })
+        .required(),
+      password: Joi.string()
+        .pattern(new RegExp("^[a-zA-Z0-9]{3,30}$"))
+        .required(),
+      rePassword: Joi.any().valid(Joi.ref("password")).required().messages({
+        "any.only": "Passwords do not match",
       }),
-      password: Joi.string().pattern(new RegExp("^[a-zA-Z0-9]{3,30}$")),
+      dateOfBirth: Joi.date().iso().max("2020-12-31").required().messages({
+        "date.max": "You must be born before 2021",
+      }),
     });
-    return schema.validate(formData, { abortEarly: true });
+    return schema.validate(formData, { abortEarly: false });
   }
+
   return (
     <div>
       <section className="vh-100">
@@ -65,7 +92,7 @@ export default function SignUp() {
                       )}
                       {errors.length > 0 ? (
                         errors.map((err, i) => (
-                          <h6 key={i} className=" alert alert-danger">
+                          <h6 key={i} className="alert alert-danger">
                             {err.message}
                           </h6>
                         ))
@@ -76,14 +103,29 @@ export default function SignUp() {
                         <div className="d-flex flex-row align-items-center mb-4">
                           <i className="fas fa-user fa-lg me-3 fa-fw"></i>
                           <div className="form-outline flex-fill mb-0">
-                            <label className="form-label" htmlFor="">
-                              Your Name
+                            <label className="form-label" htmlFor="userName">
+                              User Name
                             </label>
                             <input
                               onChange={getData}
-                              name="name"
+                              name="userName"
                               type="text"
-                              id="form3Example1c"
+                              id="userName"
+                              className="form-control"
+                            />
+                          </div>
+                        </div>
+                        <div className="d-flex flex-row align-items-center mb-4">
+                          <i className="fas fa-calendar fa-lg me-3 fa-fw"></i>
+                          <div className="form-outline flex-fill mb-0">
+                            <label className="form-label" htmlFor="dateOfBirth">
+                              Birth Date
+                            </label>
+                            <input
+                              onChange={getData}
+                              name="dateOfBirth"
+                              type="date"
+                              id="dateOfBirth"
                               className="form-control"
                             />
                           </div>
@@ -91,14 +133,14 @@ export default function SignUp() {
                         <div className="d-flex flex-row align-items-center mb-4">
                           <i className="fas fa-envelope fa-lg me-3 fa-fw"></i>
                           <div className="form-outline flex-fill mb-0">
-                            <label className="form-label" htmlFor="">
+                            <label className="form-label" htmlFor="email">
                               Your Email
                             </label>
                             <input
                               onChange={getData}
                               name="email"
                               type="email"
-                              id="form3Example3c"
+                              id="email"
                               className="form-control"
                             />
                           </div>
@@ -106,14 +148,29 @@ export default function SignUp() {
                         <div className="d-flex flex-row align-items-center mb-4">
                           <i className="fas fa-lock fa-lg me-3 fa-fw"></i>
                           <div className="form-outline flex-fill mb-0">
-                            <label className="form-label" htmlFor="">
+                            <label className="form-label" htmlFor="password">
                               Password
                             </label>
                             <input
                               onChange={getData}
                               name="password"
                               type="password"
-                              id="form3Example4c"
+                              id="password"
+                              className="form-control"
+                            />
+                          </div>
+                        </div>
+                        <div className="d-flex flex-row align-items-center mb-4">
+                          <i className="fas fa-lock fa-lg me-3 fa-fw"></i>
+                          <div className="form-outline flex-fill mb-0">
+                            <label className="form-label" htmlFor="rePassword">
+                              Confirm Password
+                            </label>
+                            <input
+                              onChange={getData}
+                              name="rePassword"
+                              type="password"
+                              id="rePassword"
                               className="form-control"
                             />
                           </div>
@@ -124,9 +181,14 @@ export default function SignUp() {
                             type="checkbox"
                             value=""
                             id="form2Example3c"
+                            checked={isChecked}
+                            onChange={handleCheckboxChange}
                           />
-                          <label className="form-check-label" htmlFor="">
-                            I agree all statements in{" "}
+                          <label
+                            className="form-check-label"
+                            htmlFor="form2Example3c"
+                          >
+                            I agree to all statements in{" "}
                             <Link to="#!">Terms of service</Link>
                           </label>
                         </div>
@@ -141,35 +203,10 @@ export default function SignUp() {
                           </button>
                           <p className="small fw-bold mt-2 pt-1 mb-0">
                             Have an account?{" "}
-                            <Link to="#!" className="link-primary">
+                            <Link to="/Login" className="link-primary">
                               Login
                             </Link>
                           </p>
-                        </div>
-                        <div className="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start mt-3">
-                          <p className="lead fw-normal mb-0 me-5">
-                            Sign up with
-                          </p>
-                          <button
-                            type="button"
-                            className="btn btn-dark btn-floating mx-1"
-                          >
-                            <i className="fab fa-facebook-f"></i>
-                          </button>
-
-                          <button
-                            type="button"
-                            className="btn btn-dark btn-floating mx-1"
-                          >
-                            <i className="fab fa-twitter"></i>
-                          </button>
-
-                          <button
-                            type="button"
-                            className="btn btn-dark btn-floating mx-1"
-                          >
-                            <i className="fab fa-linkedin-in"></i>
-                          </button>
                         </div>
                       </form>
                     </div>
