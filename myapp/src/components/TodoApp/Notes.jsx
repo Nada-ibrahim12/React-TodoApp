@@ -14,7 +14,7 @@ export default function Notes({
   return (
     <div>
       <section className="vh-100">
-        <div className="container py-5 h-100">
+        <div className="container h-100">
           <div className="row d-flex justify-content-center align-items-center h-100">
             <div className="col">
               <div className="card" id="list1">
@@ -65,8 +65,7 @@ export default function Notes({
                     <select data-mdb-select-init>
                       <option value="1">All</option>
                       <option value="2">Completed</option>
-                      <option value="3">Active</option>
-                      <option value="4">Has due date</option>
+                      <option value="3">Not Completed</option>
                     </select>
                     <p className="small mb-0 ms-4 me-2 text-muted">Sort</p>
                     <select data-mdb-select-init>

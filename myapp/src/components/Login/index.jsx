@@ -29,6 +29,7 @@ export default function Login({ saveDataUser }) {
       .then((res) => {
         console.log(res);
         localStorage.setItem("Token", res.data.jwt);
+        localStorage.setItem("currentUser", formData.email);
         saveDataUser();
         navigate("/welcomePage");
       })

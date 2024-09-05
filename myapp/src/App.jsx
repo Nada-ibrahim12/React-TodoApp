@@ -25,6 +25,7 @@ export default function App() {
   function logOut() {
     setUserData(null);
     localStorage.removeItem("Token");
+    localStorage.removeItem("currentUser"); 
     Navigate("/login");
   }
 

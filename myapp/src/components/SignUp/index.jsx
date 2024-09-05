@@ -1,5 +1,5 @@
 import { Outlet, Link, useNavigate } from "react-router-dom";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Joi from "joi";
 
@@ -8,6 +8,7 @@ export default function SignUp() {
   const [error, setError] = useState("");
   const [errors, setErrors] = useState([]);
   const [isChecked, setIsChecked] = useState(false);
+  const [usernames, setUsernames] = useState([]);
 
   const [formData, setFormData] = useState({
     userName: "",
@@ -26,6 +27,10 @@ export default function SignUp() {
   function handleCheckboxChange() {
     setIsChecked(!isChecked);
   }
+  useEffect(() => {
+    const storedUsernames = JSON.parse(localStorage.getItem("usernames")) || [];
+    setUsernames(storedUsernames);
+  }, []);
 
   function submitHandler(e) {
     e.preventDefault();
@@ -41,6 +46,7 @@ export default function SignUp() {
         .post("http://hawas.runasp.net/api/v1/Register", formData)
         .then((res) => {
           console.log(res.data);
+          localStorage.setItem("currentUser", formData.email);
           navigate("/Login");
         })
         .catch((err) => {
