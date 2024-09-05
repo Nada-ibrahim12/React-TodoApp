@@ -11,43 +11,62 @@ export default function Login({ saveDataUser }) {
     email: "",
     password: "",
   });
-  function getData(e) {
-    let data = { ...formData };
-    data[e.target.name] = e.target.value;
-    setFormData(data);
-  }
 
-  function submitHandler(e) {
+  const getData = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const submitHandler = (e) => {
     e.preventDefault();
-    let statusError = validation();
-    if (statusError?.error) {
-      setErrors(statusError?.error.details);
-    } else {
-      axios
-        .post("", formData)
-        .then((res) => {
-          console.log(res.data.token);
-          localStorage.setItem("Token", res.data.token);
-          saveDataUser();
-          navigate("/welcomePage");
-        })
-        .catch((err) => {
-          console.log(err);
-          setError(err.response.data.message);
-        });
+    const validationErrors = validation();
+    if (validationErrors) {
+      setErrors(validationErrors);
+      return;
     }
-  }
+    axios
+      .post("http://hawas.runasp.net/api/v1/Login", formData)
+      .then((res) => {
+        console.log(res);
+        localStorage.setItem("Token", res.data.jwt);
+        saveDataUser();
+        navigate("/welcomePage");
+      })
+      .catch((err) => {
+        setError(err.response?.data?.message || "Invalid email or password");
+      });
+  };
 
-  function validation() {
-    let schema = Joi.object({
-      email: Joi.string().email({
-        minDomainSegments: 2,
-        tlds: { allow: ["com", "net"] },
-      }),
-      password: Joi.string().pattern(new RegExp("^[a-zA-Z0-9]{3,30}$")),
+  const validation = () => {
+    const schema = Joi.object({
+      email: Joi.string()
+        .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
+        .required(),
+      password: Joi.string()
+        .min(8)
+        .max(30)
+        .pattern(
+          new RegExp(
+            "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]+$"
+          )
+        )
+        .required()
+        .messages({
+          "string.base": "Password must be a string",
+          "string.empty": "Password cannot be empty",
+          "string.min": "Password must be at least {#limit} characters long",
+          "string.max":
+            "Password must be less than or equal to {#limit} characters",
+          "string.pattern.base":
+            "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+          "any.required": "Password is required",
+        }),
     });
-    return schema.validate(formData, { abortEarly: true });
-  }
+
+    const { error } = schema.validate(formData, { abortEarly: false });
+    return error ? error.details : null;
+  };
+
   return (
     <div>
       <section className="vh-75 mt-5 pt-5">
@@ -64,20 +83,13 @@ export default function Login({ saveDataUser }) {
               <p className="text-center h1 fw-bold mb-2 mx-1 mx-md-4 mt-4">
                 Login
               </p>
-              {error.length ? (
-                <h6 className="alert alert-danger">{error}</h6>
-              ) : (
-                <></>
-              )}
-              {errors.length > 0 ? (
+              {error && <h6 className="alert alert-danger">{error}</h6>}
+              {errors.length > 0 &&
                 errors.map((err, i) => (
-                  <h6 key={i} className=" alert alert-danger">
+                  <h6 key={i} className="alert alert-danger">
                     {err.message}
                   </h6>
-                ))
-              ) : (
-                <></>
-              )}
+                ))}
               <form onSubmit={submitHandler}>
                 <div className="form-outline mb-4">
                   <label className="form-label" htmlFor="form3Example3">

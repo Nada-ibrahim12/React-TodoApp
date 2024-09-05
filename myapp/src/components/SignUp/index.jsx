@@ -60,8 +60,25 @@ export default function SignUp() {
         })
         .required(),
       password: Joi.string()
-        .pattern(new RegExp("^[a-zA-Z0-9]{3,30}$"))
-        .required(),
+        .min(8)
+        .max(30)
+        .pattern(
+          new RegExp(
+            "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]+$"
+          )
+        )
+        .required()
+        .messages({
+          "string.base": "Password must be a string",
+          "string.empty": "Password cannot be empty",
+          "string.min": "Password must be at least {#limit} characters long",
+          "string.max":
+            "Password must be less than or equal to {#limit} characters",
+          "string.pattern.base":
+            "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+          "any.required": "Password is required",
+        }),
+
       rePassword: Joi.any().valid(Joi.ref("password")).required().messages({
         "any.only": "Passwords do not match",
       }),
